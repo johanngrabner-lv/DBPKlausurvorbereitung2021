@@ -71,8 +71,14 @@ public class MyStarter {
 
 
 */
+        /*Aufgabe 6d
         List<Rechnung> rechnungen=dbHelper.getRechnungenByKunde(1);
         System.out.println(rechnungen);
+        */
+
+        ArrayList<Kunde> weiblicheKunden =new ArrayList<Kunde>();
+        weiblicheKunden = dbHelper.getWeiblicheKunden();
+        System.out.println(weiblicheKunden);
 
 
 

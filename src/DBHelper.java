@@ -121,7 +121,7 @@ public class DBHelper {
                 if (rs.wasNull()){
                     k.setGeschlecht("nicht definiert");
                 }
-                k.setBonuspunkte(rs.getDouble("Bonsupunkte"));
+                k.setBonuspunkte(rs.getDouble("Bonuspunkte"));
             } else {
                 System.out.println("Kunde wurde nicht gefunden");
             }
@@ -221,6 +221,25 @@ public class DBHelper {
         }
 
         return rechnungen;
+    }
+    public ArrayList<Kunde> getWeiblicheKunden(){
+        ArrayList<Kunde> weiblicheKunden=new ArrayList<Kunde>();
+
+        String selectWeiblicheKunden = "SELECT * FROM Kunden WHERE Geschlecht='Frau'";
+        try (Connection conn = DriverManager.getConnection(url);
+             PreparedStatement preparedStatement = conn.prepareStatement(selectWeiblicheKunden)) {
+
+             ResultSet rs = preparedStatement.executeQuery();
+            while (rs.next()) {
+             int kdnr=rs.getInt("Kdnr");
+             Kunde k = getKundeByKdnr(kdnr);
+             weiblicheKunden.add(k);
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
+        return  weiblicheKunden;
     }
 
 
