@@ -88,13 +88,12 @@ public class MyStarter {
         System.out.println(mostBonusPoints);
         */
 
+        /*Aufgabe 9
         Kunde kDelte = new Kunde();
         kDelte.setKdnr(1);;
         dbHelper.loescheAlleRechnungenUndDanachDenKunden(kDelte);
-
-
-
-
-
+*/
+        /*Aufgabe 10 */
+        dbHelper.printKundenMetadata();
     }
 }

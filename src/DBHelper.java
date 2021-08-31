@@ -297,6 +297,35 @@ public class DBHelper {
 
     }
 
+    public void printKundenMetadata()
+    {
+        try (Connection conn = DriverManager.getConnection(url);
+             PreparedStatement stmt = conn.prepareStatement("SELECT * FROM Kunden")) {
+            ResultSet rs = stmt.executeQuery();
+
+            ResultSetMetaData  meta = rs.getMetaData();
+            int numerics = 0;
+
+            for ( int i = 1; i <= meta.getColumnCount(); i++ )
+            {
+                System.out.printf( "%-20s %-20s%n", meta.getColumnLabel( i ),
+                        meta.getColumnTypeName( i ) );
+
+                if ( meta.isSigned( i ) )
+                    numerics++;
+            }
+
+            System.out.println();
+            System.out.println( "Spalten: " + meta.getColumnCount() +
+                    ", Numerisch: " + numerics );
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
+
+    }
+
 
 
 }
