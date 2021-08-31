@@ -1,3 +1,6 @@
+import java.util.ArrayList;
+import java.util.List;
+
 public class MyStarter {
 
     public static void main(String args[]){
@@ -39,6 +42,39 @@ public class MyStarter {
         dbHelper.insertRechnung(r1,k1);
         System.out.println("Neue Rechnung " + r1);
         */
+
+        /*Aufgabe 6c */
+        /*
+        Rechnung r =new Rechnung();
+        r.setDatum("1.03.2021");
+        r.setGesamtbetrag(400);
+        r.setKdnr(1);
+        r.setRenr(1);
+        dbHelper.updateRechnung(r);
+*/
+        /*Aufgabe 6b*/
+        /*
+        Kunde kNeu =new Kunde();
+        kNeu.setVorname("Josef");
+        kNeu.setNachname("Mayer");
+        kNeu.setGeschlecht("Mann");
+        kNeu.setBonuspunkte(100);
+
+        Rechnung rNeu =new Rechnung();
+        rNeu.setDatum("1.03.2021");
+        rNeu.setGesamtbetrag(400);
+
+        ArrayList<Rechnung> rechnungen=new ArrayList<Rechnung>();
+        rechnungen.add(rNeu);
+
+        dbHelper.insertKundeUndRechnungen(rechnungen,kNeu);
+
+
+*/
+        List<Rechnung> rechnungen=dbHelper.getRechnungenByKunde(1);
+        System.out.println(rechnungen);
+
+
 
     }
 }

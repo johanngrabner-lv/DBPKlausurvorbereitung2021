@@ -1,4 +1,6 @@
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DBHelper {
     private String url = "jdbc:sqlite:C://sqlite/db/Klausurvorbereitung.db";
@@ -163,6 +165,62 @@ public class DBHelper {
 
         neueRechnung.setRenr(lastId);
         return lastId;
+    }
+
+    /*Aufgabe 6c*/
+    public void updateRechnung(Rechnung rechnung){
+        String updateSQL="Update Rechnungen SET Kdnr=?, Gesamtbetrag=?, Datum =? Where ReNr=? ";
+
+        try (Connection conn = DriverManager.getConnection(url);
+             PreparedStatement pStmt = conn.prepareStatement(updateSQL);
+            ) {
+            pStmt.setDouble(1,rechnung.getGesamtbetrag());
+            pStmt.setString(2,rechnung.getDatum());
+            pStmt.setInt(3,rechnung.getKdnr());
+            pStmt.setInt(4,rechnung.getRenr());
+
+            int affectedRows = pStmt.executeUpdate();
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
+
+    }
+
+    public void insertKundeUndRechnungen(ArrayList<Rechnung> neueRechnungen, Kunde neuerKunde){
+        int newId = insertKunde(neuerKunde);
+
+        for (int counter = 0; counter < neueRechnungen.size(); counter++) {
+            Rechnung r = neueRechnungen.get(counter);
+            r.setKdnr(newId);
+            insertRechnung(r, neuerKunde);
+        }
+    }
+
+    public List<Rechnung> getRechnungenByKunde(int kdnr){
+        ArrayList<Rechnung> rechnungen = new ArrayList<>();
+
+
+        String getRechnungByKDNR = "SELECT * FROM Rechnungen WHERE KDNR = ?";
+        try (Connection conn = DriverManager.getConnection(url);
+             PreparedStatement preparedStatement = conn.prepareStatement(getRechnungByKDNR)) {
+            preparedStatement.setInt(1, kdnr);
+
+            ResultSet rs = preparedStatement.executeQuery();
+            while (rs.next()) {
+                Rechnung r=new Rechnung();
+                r.setKdnr(rs.getInt("KDNR"));
+                r.setDatum(rs.getString("Datum"));
+                r.setGesamtbetrag(rs.getDouble("Gesamtbetrag"));
+                r.setRenr(rs.getInt("ReNr"));
+                rechnungen.add(r);
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
+        return rechnungen;
     }
 
 
