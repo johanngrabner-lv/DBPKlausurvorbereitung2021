@@ -132,4 +132,38 @@ public class DBHelper {
         return k;
     }
 
+    public int insertRechnung(Rechnung neueRechnung, Kunde vorhandenerKunde){
+
+        int lastId=0;
+
+        String insertSQL="INSERT INTO Rechnungen(Kdnr, Gesamtbetrag, Datum) ";
+        insertSQL += "Values(?,?,?)";
+        String sqlText = "SELECT last_insert_rowid() as rowid;";
+
+        try (Connection conn = DriverManager.getConnection(url);
+             PreparedStatement pStmt = conn.prepareStatement(insertSQL);
+             PreparedStatement stmtLastRowId = conn.prepareStatement(sqlText)) {
+            pStmt.setInt(1,vorhandenerKunde.getKdnr());
+            pStmt.setDouble(2,neueRechnung.getGesamtbetrag());
+            pStmt.setString(3,neueRechnung.getDatum());
+            pStmt.executeUpdate();
+
+            ResultSet rs = null;
+
+            rs = stmtLastRowId.executeQuery();
+            rs.next();
+            lastId=rs.getInt("rowid");
+            rs.close();
+            pStmt.close();
+
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
+        neueRechnung.setRenr(lastId);
+        return lastId;
+    }
+
+
 }

@@ -19,6 +19,7 @@ public class MyStarter {
         System.out.println("Neuer Kunden " + kNeu);
         */
 
+        /*Update und GetKunde
         Kunde k1 = dbHelper.getKundeByKdnr(1);
         System.out.println(k1);
         k1.setVorname("Hans");
@@ -27,6 +28,17 @@ public class MyStarter {
         System.out.println(k1);
         k1 = dbHelper.getKundeByKdnr(7);
         System.out.println(k1);
+*/
+        /* Aufgabe 6 */
+        /*
+        Kunde k1 = dbHelper.getKundeByKdnr(1);
+        Rechnung r1 =new Rechnung();
+        r1.setDatum("1.03.2021");
+        r1.setGesamtbetrag(200);
+        r1.setKdnr(k1.getKdnr());
+        dbHelper.insertRechnung(r1,k1);
+        System.out.println("Neue Rechnung " + r1);
+        */
 
     }
 }
