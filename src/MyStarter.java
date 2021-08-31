@@ -7,6 +7,9 @@ public class MyStarter {
         System.out.println("Klausurvorbereitung");
 
         DBHelper dbHelper=new DBHelper();
+        System.out.println(dbHelper.getKundeByKdnr(120));
+        System.out.println("Alle Kunden\n");
+        System.out.println(dbHelper.getAlleKunden());
         /*
         dbHelper.createKundenTable();
         dbHelper.createRechnungenTable();
@@ -94,6 +97,8 @@ public class MyStarter {
         dbHelper.loescheAlleRechnungenUndDanachDenKunden(kDelte);
 */
         /*Aufgabe 10 */
-        dbHelper.printKundenMetadata();
+        //dbHelper.printKundenMetadata();
+
+        dbHelper.fillSampleKundenDaten();
     }
 }

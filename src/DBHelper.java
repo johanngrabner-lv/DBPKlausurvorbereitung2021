@@ -5,6 +5,7 @@ import java.util.List;
 public class DBHelper {
     private String url = "jdbc:sqlite:C://sqlite/db/Klausurvorbereitung.db";
 
+
     public void createKundenTable(){
         String ddlCreateTableKunden="CREATE TABLE ";
         ddlCreateTableKunden += " Kunden (KDNR INTEGER PRIMARY KEY AUTOINCREMENT, ";
@@ -25,7 +26,7 @@ public class DBHelper {
         }
 
     }
-
+    /*Aufgabe 3*/
     public void createRechnungenTable(){
         String ddlCreateRechnungenKunden = "CREATE TABLE ";
         ddlCreateRechnungenKunden += " Rechnungen(RENR INTEGER PRIMARY KEY AUTOINCREMENT, ";
@@ -44,6 +45,7 @@ public class DBHelper {
         }
     }
 
+    /*Aufgabe 5a*/
     public int insertKunde(Kunde neuerKunde){
 
         int lastId=0;
@@ -51,7 +53,6 @@ public class DBHelper {
         String insertSQL="INSERT INTO Kunden(Vorname, Nachname, Geschlecht, Bonuspunkte) ";
         insertSQL += "Values(?,?,?,?)";
         String sqlText = "SELECT last_insert_rowid() as rowid;";
-
         try (Connection conn = DriverManager.getConnection(url);
              PreparedStatement pStmt = conn.prepareStatement(insertSQL);
              PreparedStatement stmtLastRowId = conn.prepareStatement(sqlText)) {
@@ -61,12 +62,12 @@ public class DBHelper {
             pStmt.setDouble(4,neuerKunde.getBonuspunkte());
 
             pStmt.executeUpdate();
-
+            /*Insert von einer anderen Connection beeinflusst nicht die row_id*/
             ResultSet rs = null;
-
             rs = stmtLastRowId.executeQuery();
             rs.next();
             lastId=rs.getInt("rowid");
+            lastId=rs.getInt(1);
             rs.close();
             pStmt.close();
 
@@ -79,6 +80,16 @@ public class DBHelper {
         return lastId;
     }
 
+    public void fillSampleKundenDaten(){
+        Kunde k1 =new Kunde();
+        k1.setVorname("Demo");
+        k1.setBonuspunkte(700);
+        k1.setNachname("Beispiel");
+        k1.setGeschlecht("Mann");
+        insertKunde(k1);
+    }
+
+    /*Aufgabe 5b*/
     public void updateKunde(Kunde kunde){
 
         String updateKunde="UPDATE Kunden SET Vorname=?, Nachname=?, Geschlecht=?, Bonuspunkte=? WHERE KDNR=? ";
@@ -92,6 +103,7 @@ public class DBHelper {
             pStmt.setDouble(4,kunde.getBonuspunkte());
             pStmt.setInt(5,kunde.getKdnr());
 
+            //WHERE Bedinungen hat keine Zeilen zurückgeliefert
             int affectedRows = pStmt.executeUpdate();
 
             if (affectedRows==0){
@@ -105,6 +117,7 @@ public class DBHelper {
 
     }
 
+    /*Aufgabe 4a*/
     public Kunde getKundeByKdnr(int kdnr){
         Kunde k =new Kunde();
         String getKundeByKDNR = "SELECT * FROM Kunden WHERE KDNR = ?";
@@ -123,7 +136,10 @@ public class DBHelper {
                 }
                 k.setBonuspunkte(rs.getDouble("Bonuspunkte"));
             } else {
+                //Antwort auf theoretische Frage -- falls rs.next() false liefert, kein Kunde
+                //Antwort zu Frage 8B
                 System.out.println("Kunde wurde nicht gefunden");
+
             }
 
 
@@ -134,6 +150,29 @@ public class DBHelper {
         return k;
     }
 
+
+    /*Aufgabe 4b*/
+    public ArrayList<Kunde> getAlleKunden(){
+        ArrayList<Kunde> meineKunden =new ArrayList<Kunde>();
+        String getAllKunden = "SELECT * FROM Kunden ";
+        try (Connection conn = DriverManager.getConnection(url);
+             PreparedStatement preparedStatement = conn.prepareStatement(getAllKunden)) {
+             ResultSet rs = preparedStatement.executeQuery();
+            while (rs.next()) {
+                int kdnr=rs.getInt("Kdnr");
+                Kunde k=getKundeByKdnr(kdnr);
+                meineKunden.add(k);
+
+            }
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
+        return meineKunden;
+    }
+
+    /*Aufgabe 6a*/
     public int insertRechnung(Rechnung neueRechnung, Kunde vorhandenerKunde){
 
         int lastId=0;
@@ -148,10 +187,11 @@ public class DBHelper {
             pStmt.setInt(1,vorhandenerKunde.getKdnr());
             pStmt.setDouble(2,neueRechnung.getGesamtbetrag());
             pStmt.setString(3,neueRechnung.getDatum());
+
+            //Bitte vorab foreign-key aktivieren
             pStmt.executeUpdate();
 
             ResultSet rs = null;
-
             rs = stmtLastRowId.executeQuery();
             rs.next();
             lastId=rs.getInt("rowid");
@@ -188,6 +228,7 @@ public class DBHelper {
 
     }
 
+    /*Aufgabe 6b*/
     public void insertKundeUndRechnungen(ArrayList<Rechnung> neueRechnungen, Kunde neuerKunde){
         int newId = insertKunde(neuerKunde);
 
@@ -198,6 +239,7 @@ public class DBHelper {
         }
     }
 
+    /*Aufgabe 6d */
     public List<Rechnung> getRechnungenByKunde(int kdnr){
         ArrayList<Rechnung> rechnungen = new ArrayList<>();
 
@@ -209,6 +251,7 @@ public class DBHelper {
 
             ResultSet rs = preparedStatement.executeQuery();
             while (rs.next()) {
+                /*TODO -- extract Method -- getRechnungByReNr*/
                 Rechnung r=new Rechnung();
                 r.setKdnr(rs.getInt("KDNR"));
                 r.setDatum(rs.getString("Datum"));
@@ -222,6 +265,8 @@ public class DBHelper {
 
         return rechnungen;
     }
+
+    /*Aufgabe 7*/
     public ArrayList<Kunde> getWeiblicheKunden(){
         ArrayList<Kunde> weiblicheKunden=new ArrayList<Kunde>();
 
@@ -242,10 +287,11 @@ public class DBHelper {
         return  weiblicheKunden;
     }
 
+    /*Aufgabe 7*/
     public Kunde getKundeMitDenMeistenBonusPunkten(){
         Kunde k=null;
 
-        String selectKundenOrderByBonuspunkteDesc = "SELECT * FROM Kunden ORDER BY Bonuspunkte desc";
+        String selectKundenOrderByBonuspunkteDesc = "SELECT * FROM Kunden ORDER BY Bonuspunkte DESC";
         try (Connection conn = DriverManager.getConnection(url);
              PreparedStatement preparedStatement = conn.prepareStatement(selectKundenOrderByBonuspunkteDesc)) {
 
@@ -261,6 +307,16 @@ public class DBHelper {
       return  k;
     }
 
+    /*Aufgabe 9*/
+    /*INSERT
+1. 1-Seite INSERT INTO Kunden
+2. n-Seite INSERT INTO Rechnungen
+
+Delete
+1. n-Seite LÖSCHEN DELETE FROM Rechnungen
+2. 1-Seite DELETE FROM Kunden
+*/
+
     public void loescheAlleRechnungenUndDanachDenKunden(Kunde k){
         String deleteRechnungen="DELETE FROM Rechnungen WHERE KDNR = ?";
         String deleteKunde="DELETE FROM Kunden WHERE KDNR = ?";
@@ -275,13 +331,14 @@ public class DBHelper {
              PreparedStatement pStmtDeleteKunde = conn.prepareStatement(deleteKunde);
         ) {
 
-            conn.setAutoCommit(false);
+
             pStmtDeleteKunde.setInt(1,k.getKdnr());
             pStmtDeleteRechnungen.setInt(1,k.getKdnr());
 
+            conn.setAutoCommit(false);
+            //Order matters
             pStmtDeleteRechnungen.executeUpdate();
             pStmtDeleteKunde.executeUpdate();
-
             conn.commit();
 
         } catch (SQLException e) {
