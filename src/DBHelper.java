@@ -242,5 +242,61 @@ public class DBHelper {
         return  weiblicheKunden;
     }
 
+    public Kunde getKundeMitDenMeistenBonusPunkten(){
+        Kunde k=null;
+
+        String selectKundenOrderByBonuspunkteDesc = "SELECT * FROM Kunden ORDER BY Bonuspunkte desc";
+        try (Connection conn = DriverManager.getConnection(url);
+             PreparedStatement preparedStatement = conn.prepareStatement(selectKundenOrderByBonuspunkteDesc)) {
+
+            ResultSet rs = preparedStatement.executeQuery();
+            if (rs.next()) {
+                int kdnr=rs.getInt("Kdnr");
+                k = getKundeByKdnr(kdnr);
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
+      return  k;
+    }
+
+    public void loescheAlleRechnungenUndDanachDenKunden(Kunde k){
+        String deleteRechnungen="DELETE FROM Rechnungen WHERE KDNR = ?";
+        String deleteKunde="DELETE FROM Kunden WHERE KDNR = ?";
+        Connection conn = null;
+        try{
+             conn = DriverManager.getConnection(url);
+        } catch (SQLException e) {
+        }
+
+        try (
+             PreparedStatement pStmtDeleteRechnungen = conn.prepareStatement(deleteRechnungen);
+             PreparedStatement pStmtDeleteKunde = conn.prepareStatement(deleteKunde);
+        ) {
+
+            conn.setAutoCommit(false);
+            pStmtDeleteKunde.setInt(1,k.getKdnr());
+            pStmtDeleteRechnungen.setInt(1,k.getKdnr());
+
+            pStmtDeleteRechnungen.executeUpdate();
+            pStmtDeleteKunde.executeUpdate();
+
+            conn.commit();
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            if (conn!=null){
+                try {
+                    conn.rollback();
+                } catch (SQLException e2) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+    }
+
+
 
 }

@@ -76,9 +76,23 @@ public class MyStarter {
         System.out.println(rechnungen);
         */
 
+        /* Aufgabe 7
         ArrayList<Kunde> weiblicheKunden =new ArrayList<Kunde>();
         weiblicheKunden = dbHelper.getWeiblicheKunden();
         System.out.println(weiblicheKunden);
+        */
+
+        /*Aufgabe 8*/
+        /*
+        Kunde mostBonusPoints = dbHelper.getKundeMitDenMeistenBonusPunkten();
+        System.out.println(mostBonusPoints);
+        */
+
+        Kunde kDelte = new Kunde();
+        kDelte.setKdnr(1);;
+        dbHelper.loescheAlleRechnungenUndDanachDenKunden(kDelte);
+
+
 
 
 
