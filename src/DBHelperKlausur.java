@@ -29,7 +29,7 @@ public class DBHelperKlausur {
         ddlCreateTableProjektaufgaben += " Projektaufgaben(ProjektaufgabenId INTEGER PRIMARY KEY AUTOINCREMENT, ";
         ddlCreateTableProjektaufgaben += " ProjektId INTEGER, ";
         ddlCreateTableProjektaufgaben += " Aufgabenbezeichnung varchar(20), ";
-        ddlCreateTableProjektaufgaben += " Laufzeit Integer, ";
+        ddlCreateTableProjektaufgaben += " AufwandInStunden Integer, ";
         ddlCreateTableProjektaufgaben += " FOREIGN KEY (ProjektId) REFERENCES Projekte(ProjektId)";
         ddlCreateTableProjektaufgaben += ")";
         System.out.println("DDL to create the Rechnungen-Table " +  ddlCreateTableProjektaufgaben);
@@ -123,6 +123,39 @@ public class DBHelperKlausur {
         }
 
         return meineProjekte;
+    }
+
+    public int insertProjektAufgabe(Projektaufgaben neueAufgabe, int projektId){
+
+        int lastId=0;
+
+        String insertSQL="INSERT INTO Projektaufgaben(ProjektId, Aufgabenbezeichnung,AufwandInStunden) ";
+        insertSQL += "Values(?,?,?)";
+        String sqlText = "SELECT last_insert_rowid() as rowid;";
+        try (Connection conn = DriverManager.getConnection(url);
+             PreparedStatement pStmt = conn.prepareStatement(insertSQL);
+             PreparedStatement stmtLastRowId = conn.prepareStatement(sqlText)) {
+            pStmt.setInt(1,projektId);
+            pStmt.setString(2,neueAufgabe.getAufgabenBezeichnung());
+            pStmt.setInt(3,neueAufgabe.getAufwandInStunden());
+
+            pStmt.executeUpdate();
+            /*Insert von einer anderen Connection beeinflusst nicht die row_id*/
+            ResultSet rs = null;
+            rs = stmtLastRowId.executeQuery();
+            rs.next();
+            lastId=rs.getInt("rowid");
+
+            rs.close();
+            pStmt.close();
+
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
+       neueAufgabe.setProjektaufgabenId(lastId);
+        return lastId;
     }
 
 }

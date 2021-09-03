@@ -28,7 +28,13 @@ public class MyStarter {
         Projekte projektSuche = dbKL.getProjektById(1);
        // System.out.println(projektSuche);
 
-        System.out.println(dbKL.getAllProjekteOrdrByBudgetDesc());
+        //System.out.println(dbKL.getAllProjekteOrdrByBudgetDesc());
+        Projektaufgaben aufgabe=new Projektaufgaben();
+        aufgabe.setAufwandInStunden(30);
+        aufgabe.setAufgabenBezeichnung("Ein Test");
+        //aufgabe.setProjektId(1);
+        dbKL.insertProjektAufgabe(aufgabe,1);
+
         /*
         dbHelper.createKundenTable();
         dbHelper.createRechnungenTable();
