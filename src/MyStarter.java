@@ -31,9 +31,14 @@ public class MyStarter {
         //System.out.println(dbKL.getAllProjekteOrdrByBudgetDesc());
         Projektaufgaben aufgabe=new Projektaufgaben();
         aufgabe.setAufwandInStunden(30);
-        aufgabe.setAufgabenBezeichnung("Ein Test");
+        aufgabe.setAufgabenBezeichnung("Hans");
         //aufgabe.setProjektId(1);
-        dbKL.insertProjektAufgabe(aufgabe,1);
+       // dbKL.insertProjektAufgabe(aufgabe,1);
+        //System.out.println(dbKL.getProjektMitDenMeistenAufgaben());
+       // System.out.println(dbKL.getProjektMitLaengsterLaufzeit());
+
+        System.out.println(dbKL.getSummeAufwandInStundenByProjektId(1));
+
 
         /*
         dbHelper.createKundenTable();

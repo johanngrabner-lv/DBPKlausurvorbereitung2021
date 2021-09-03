@@ -158,4 +158,84 @@ public class DBHelperKlausur {
         return lastId;
     }
 
+    public Projekte getProjektMitDenMeistenAufgaben(){
+        Projekte p =new Projekte();
+        String getProjektMitMeistenAufgaben = "SELECT p.ProjektId, COUNT(a.ProjektId) FROM Projekte p JOIN ProjektAufgaben a\n" +
+                "ON p.ProjektId = a.ProjektId GROUP BY p.ProjektId\n" +
+                "ORDER BY COUNT(a.ProjektId) DESC\n";
+        try (Connection conn = DriverManager.getConnection(url);
+             PreparedStatement preparedStatement = conn.prepareStatement(getProjektMitMeistenAufgaben)) {
+            ResultSet rs = preparedStatement.executeQuery();
+            if (rs.next()) {
+                int projektId=rs.getInt("ProjektId");
+                p = getProjektById(projektId);
+
+            } else {
+
+                System.out.println("Projekt wurde nicht gefunden");
+
+            }
+
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
+        return p;
+    }
+
+    public Projekte getProjektMitLaengsterLaufzeit(){
+        Projekte p =new Projekte();
+        String getProjektMitLaengsterLaufzeitSQL = "SELECT * FROM Projekte ORDER BY Laufzeit DESC";
+        try (Connection conn = DriverManager.getConnection(url);
+             PreparedStatement preparedStatement = conn.prepareStatement(getProjektMitLaengsterLaufzeitSQL)) {
+            ResultSet rs = preparedStatement.executeQuery();
+            if (rs.next()) {
+                int projektId=rs.getInt("ProjektId");
+                p = getProjektById(projektId);
+
+            } else {
+
+                System.out.println("Projekt wurde nicht gefunden");
+
+            }
+
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
+        return p;
+    }
+
+    public double getSummeAufwandInStundenByProjektId(int projektId){
+        Projekte p =new Projekte();
+        double summeAufwand=0;
+        String getProjektMitMeistenAufgaben = "SELECT SUM(AufwandInStunden) AS Summe FROM  ProjektAufgaben " +
+
+                "  WHERE ProjektID = ?";
+
+
+        try (Connection conn = DriverManager.getConnection(url);
+             PreparedStatement preparedStatement = conn.prepareStatement(getProjektMitMeistenAufgaben)) {
+            preparedStatement.setInt(1,projektId);
+            ResultSet rs = preparedStatement.executeQuery();
+            if (rs.next()) {
+                summeAufwand = rs.getDouble("Summe");
+
+            } else {
+
+                System.out.println("Projekt wurde nicht gefunden");
+
+            }
+
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
+        return summeAufwand;
+    }
+
+
 }
