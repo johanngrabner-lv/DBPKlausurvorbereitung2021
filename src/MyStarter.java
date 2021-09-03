@@ -4,12 +4,31 @@ import java.util.List;
 public class MyStarter {
 
     public static void main(String args[]){
+        /*
         System.out.println("Klausurvorbereitung");
 
         DBHelper dbHelper=new DBHelper();
         System.out.println(dbHelper.getKundeByKdnr(120));
         System.out.println("Alle Kunden\n");
         System.out.println(dbHelper.getAlleKunden());
+        */
+        System.out.println("Klausurnachbesprechung");
+        DBHelperKlausur dbKL = new DBHelperKlausur();
+       /* dbKL.createTableProjekte();
+        dbKL.createTableProjektaufgaben();*/
+
+        Projekte p=new Projekte();
+        p.setProjektBezeichnung("Klausur V2");
+        p.setProjektTyp("Nachbesprechung");
+        p.setBudget(5);
+        p.setLaufzeit(2);
+
+        //dbKL.insertProjekt(p);
+
+        Projekte projektSuche = dbKL.getProjektById(1);
+       // System.out.println(projektSuche);
+
+        System.out.println(dbKL.getAllProjekteOrdrByBudgetDesc());
         /*
         dbHelper.createKundenTable();
         dbHelper.createRechnungenTable();
@@ -99,6 +118,8 @@ public class MyStarter {
         /*Aufgabe 10 */
         //dbHelper.printKundenMetadata();
 
-        dbHelper.fillSampleKundenDaten();
+        //dbHelper.fillSampleKundenDaten();
+
+        //dbHelper.getDatabaseMetaData();
     }
 }

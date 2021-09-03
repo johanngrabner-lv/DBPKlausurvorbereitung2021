@@ -6,6 +6,24 @@ public class DBHelper {
     private String url = "jdbc:sqlite:C://sqlite/db/Klausurvorbereitung.db";
 
 
+    public void getDatabaseMetaData()
+    {
+            try (Connection conn = DriverManager.getConnection(url);
+                 Statement stmt = conn.createStatement()) {
+
+                DatabaseMetaData dbmd = conn.getMetaData();
+                String[] types = {"TABLE"};
+                ResultSet rs = dbmd.getTables(null, null, "%", types);
+                while (rs.next()) {
+                    System.out.println(rs.getString("TABLE_NAME"));
+                }
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+            }
+
+
+    }
+
     public void createKundenTable(){
         String ddlCreateTableKunden="CREATE TABLE ";
         ddlCreateTableKunden += " Kunden (KDNR INTEGER PRIMARY KEY AUTOINCREMENT, ";
@@ -65,7 +83,7 @@ public class DBHelper {
             /*Insert von einer anderen Connection beeinflusst nicht die row_id*/
             ResultSet rs = null;
             rs = stmtLastRowId.executeQuery();
-            rs.next();
+         //   rs.next();
             lastId=rs.getInt("rowid");
             lastId=rs.getInt(1);
             rs.close();
